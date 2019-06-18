@@ -4,14 +4,13 @@
     "toc": true
 }
 ---
-# First principles
+# 第一原则
 
-Let's create a minimal Go kit service. For now, we will use a single `main.go` file for that.
+我们来创建一个最小化的 Go kit 服务。目前，我们仅使用一个 `main.go` 文件来实现。
 
-## Your business logic
+## 你的业务逻辑
 
-Your service starts with your business logic.
-In Go kit, we model a service as an **interface**.
+你的服务始于你的业务逻辑。在 Go kit 中，我们将一个服务建模为一个**interface**。
 
 ```go
 // StringService provides operations on strings.
@@ -23,7 +22,7 @@ type StringService interface {
 }
 ```
 
-That interface will have an implementation.
+这个 interface 会有一个如下的实施实例。
 
 ```go
 import (
@@ -49,12 +48,11 @@ func (stringService) Count(s string) int {
 var ErrEmpty = errors.New("Empty string")
 ```
 
-## Requests and responses
+## 请求和回复
 
-In Go kit, the primary messaging pattern is RPC.
-So, every method in our interface will be modeled as a remote procedure call.
-For each method, we define **request and response** structs,
- capturing all of the input and output parameters respectively.
+在 Go kit 中，主要的消息通信模式是 RPC。
+因此， 我们的 interface 的每个方法都会被建模为一个远程过程调用（RPC）。
+我们为每一个方法定义 **request and response** 结构，用来相应地捕捉所有的输入和输出参数。
 
 ```go
 type uppercaseRequest struct {
@@ -75,20 +73,18 @@ type countResponse struct {
 }
 ```
 
-## Endpoints
+## Endpoints 端点
+Go kit 通过抽像的概念 **endpoint** 端点来提供它的功能。
 
-Go kit provides much of its functionality through an abstraction called an **endpoint**.
-
-An endpoint is defined as follows (you don't have to put it anywhere in the code, it is provided by `go-kit`):
+一个 endpoint 端点的定义如下(you don't have to put it anywhere in the code, it is provided by `go-kit`)：
 
 ```go
 type Endpoint func(ctx context.Context, request interface{}) (response interface{}, err error)
 ```
 
-It represents a single RPC.
-That is, a single method in our service interface.
-We'll write simple adapters to convert each of our service's methods into an endpoint.
-Each adapter takes a StringService, and returns an endpoint that corresponds to one of the methods.
+它代表一个单独的 RPC。即我们服务 interface 一个方法。
+我们会写一个简单的适配函数，将服务的每个方法转化成一个 endpoint 端点。每个适配函数以 StringService 作为输入参数，以 endpoint 作为返回参数，对应服务的方法。
+
 
 ```go
 import (
@@ -116,15 +112,16 @@ func makeCountEndpoint(svc StringService) endpoint.Endpoint {
 }
 ```
 
-## Transports
+## Transports 传输层
 
-Now we need to expose your service to the outside world, so it can be called.
-Your organization probably already has opinions about how services should talk to each other.
-Maybe you use Thrift, or custom JSON over HTTP.
-Go kit supports many **transports** out of the box.
+现在我们需要向外公开我们的服务，以便被外部调用。你们公司可能对于服务间如何通信已经有了自己的选项。
+或是 Thrift，或是基于 HTTP 传输的自定义 JSON 协议。
+Go kit 支持多种 **transports** 协议的开箱即用。
 
-For this minimal example service, let's use JSON over HTTP.
-Go kit provides a helper struct, in package transport/http.
+对于这个最小化的示例服务，让我们使用基于 HTTP 传输的 JSON。
+Go kit 在 transport/http 包里提供了一个辅助 struct。
+
+
 
 ```go
 import (
@@ -179,7 +176,7 @@ func encodeResponse(_ context.Context, w http.ResponseWriter, response interface
 
 ## stringsvc1
 
-The complete service so far is [stringsvc1](https://github.com/go-kit/kit/blob/master/examples/stringsvc1).
+目前为止完整的服务是 [stringsvc1](https://github.com/go-kit/kit/blob/master/examples/stringsvc1).
 
 ```
 $ go get github.com/go-kit/kit/examples/stringsvc1
@@ -193,17 +190,18 @@ $ curl -XPOST -d'{"s":"hello, world"}' localhost:8080/count
 {"v":12}
 ```
 
-# Middlewares
+# Middlewares 中间件
 
-No service can be considered production-ready without thorough logging and instrumentation.
+没有彻底的日志记录和度量，任何服务都不能被视为生产就绪。
 
-## Separation of concerns
+## 关注点分离
 
-Separating each layer of the call graph into individual files makes a go-kit project easier to read as you increase the number of service endpoints.
-Our first example [stringsvc1](https://github.com/go-kit/kit/blob/master/examples/stringsvc1) had all of these layers in a single main file.
-Before we add more complexity, let's separate our code into the following files and leave all remaining code in main.go
+随着服务 endpoints 端点数量的增长， 将调用序列的每一层分成单独的文件，可以更轻松地阅读和理解 go-kit 工程代码。
+我们的第一个示例 [stringsvc1](https://github.com/go-kit/kit/blob/master/examples/stringsvc1) 在一个 main 文件中包含了这些所有层。
+在我们添加更多复杂性之前，让我们将代码分成以下文件，并将所有剩余代码留在 main.go 中。 
 
-Place your **services** into a service.go file with the following functions and types.
+将你的 **services** 放一个 service.go 文件中，并包含如下的函数和类型。
+
 
 ```
 type StringService
@@ -225,15 +223,17 @@ type countRequest
 type countResponse
 ```
 
-## Transport logging
+## Transport logging 传输层记录
 
-Any component that needs to log should treat the logger like a dependency, same as a database connection.
-So, we construct our logger in our `func main`, and pass it to components that need it.
-We never use a globally-scoped logger.
+任何需要记录的组件都应该像把数据连接当作依赖项那样，同样也应将 logger 视为依赖项。
+因此，我们在我们的  `func main` 中构建我们的 logger，并将其传递给需要它的组件。
+我们一定不要使用全局范围的 logger。
 
-We could pass a logger directly into our stringService implementation, but there's a better way.
-Let's use a **middleware**, also known as a decorator.
-A middleware is a function that takes an endpoint and returns an endpoint.
+我们可以将 logger 直接传递给我们的 stringService 实现，但是还有一个更好的方法。
+
+让我们使用 **middleware** ，也称为装饰器。
+
+中间件是一个以 endpoint 作为输入参数，同时以 endpoint 作为输出参数的函数。
 
 ```go
 type Middleware func(Endpoint) Endpoint

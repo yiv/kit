@@ -3,31 +3,27 @@
     "subtitle": "Examples"
 }
 ---
-Users have consistently found that the most effective way to learn Go kit
- is to study and learn from example services.
-Here you can find some examples that will orient you to Go kit idioms,
- patterns, and best practices.
+用户们一致发现学习 Go kit 最高效的方式是通过研究和学习示例服务。
+在这里，你可以找到一些示例，可以帮助你适应 Go kit 设计风格、设计模式和最佳实践。
 
-- **[stringsvc](stringsvc.html)** is a tutorial that takes you through
-  writing a service from first principles. It can help you understand
-  the decisions that went into Go kit's design.
+
+- **[stringsvc](stringsvc.html)** 是一个通过从最初原则指导你编写服务的教程示例。
+它可以帮助你理解 Go kit 设计中的取舍。
 
 - **[addsvc](https://github.com/go-kit/kit/blob/master/examples/addsvc)**
-  is the original example service.
-  It exposes a set of operations over all supported transports.
-  It's fully logged, instrumented, and uses distributed tracing.
-  It also demonstrates how to create and use client packages.
-  It demonstrates almost all of Go kit's features.
+  是示例服务的原型。
+  它展示了一组在所有支持的传输层上可进行的操作。
+  这些操作是有关于完全日志记录、测量和如何使用分布式追踪。
+  它演示了如何创建和使用客户端代码包。
+  它演示了 Go kit 几乎所有的特性。
 
 - **[profilesvc](https://github.com/go-kit/kit/blob/master/examples/profilesvc)**
-  demonstrates how to use Go kit
-  to write a microservice with a REST-ish API.
-  It uses net/http and the excellent Gorilla web toolkit.
+  演示如何使用 Go kit 编写具有 REST-ish API 的微服务。
+  它使用了标准库的 net/http 和 卓越的 Gorilla Web 开发工具包。
 
 - **[shipping](https://github.com/go-kit/kit/blob/master/examples/shipping)**
-  is a complete, "real-world" application composed of multiple microservices,
-  based on Domain Driven Design principles.
+  是由多个基于领域驱动设计模型的微服务整合的完整的、“仿现实”的应用。
 
 - **[apigateway](https://github.com/go-kit/kit/blob/master/examples/apigateway)**
-  demonstrates how to implement the [API gateway pattern](http://microservices.io/patterns/apigateway.html)
-  backed by a Consul service discovery system.
+  演示了如何实施[API 网关设计模式](http://microservices.io/patterns/apigateway.html)，
+  使用 Consul 完成服务发现。
