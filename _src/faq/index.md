@@ -4,9 +4,9 @@
     "toc": true
 }
 ---
-# General
+# 概要
 
-## What is Go kit?
+## Go kit 是什么?
 
 Go kit is a collection of Go (golang) packages (libraries) that help you build robust, reliable, maintainable microservices.
 It was originally conceived as a toolkit to help larger (so-called _modern enterprise_) organizations adopt Go as an implementation language.
