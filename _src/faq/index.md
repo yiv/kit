@@ -20,71 +20,58 @@ Go kit 是一套可以帮助你构建强健的、可靠的和易于维护的微�
 
 如果你想把微服务设计模式引入公司，你应该使用 Go kit。
 Go kit 可以帮助你组织和构建你的服务，规避常陷阱，保证代码优雅地增长。
-Go kit 可以向工程经理或技术领导证明
-You should use Go kit if you know you want to adopt the microservices pattern in your organization.
-Go kit will help you structure and build out your services,
- avoid common pitfalls, and write code that grows with grace.
+Go kit 还可以有助于向工程经理或技术主管等利益相关者证明 Go 作为一种实践语言的可行性。
 
-Go kit can also help to justify Go as an implementation language
- to stakeholders like engineering managers or tech leads.
-Go kit de-risks both Go and microservices
- by providing mature patterns and idioms,
- written and maintained by a large group of experienced contributors,
- and validated in production environments.
+Go kit 通过提供成熟的设计模式和编程风格可大大降低在使用 Go 语言和微服务实践中的风险，它由一大批经验丰富的贡献者编写和维护，并且已经在生产环境中得到过验证。
 
-## Who is behind Go kit?
 
-Go kit was originally conceived by [Peter Bourgon](https://peter.bourgon.org/about),
- but is now built and maintained by a [large group of contributors](https://github.com/go-kit/kit/contributors)
- from a diverse set of backgrounds and organizations.
-Go kit is presently an all-volunteer effort, and has no commercial backing.
+## 谁在背后支持 Go kit 的开发
 
-## Is Go kit production-ready?
+Go kit 最初由 [Peter Bourgon]（https://peter.bourgon.org/about）发起，
+但现在由来自不同背景和组织的[大量贡献者]（https://github.com/go-kit/kit/contributors）共同构建和维护。
+Go kit 目前是一项全志愿者项目，并且没有商业支持。
 
-**Yes**. Go kit is being used in production in several organizations, large and small.
+## Go kit 是否已经适合生产环境？
 
-## Which organizations are using Go kit?
+**是**  Go kit 正在被多个组织用于生产环境中，包括大型和小型企业。
+
+## 哪些组织正在使用 Go kit？
 
 Watch this space :)
 
-## How does Go kit compare to Micro?
+## Go kit 与 Micro 相比如何？
 
-Like Go kit, [Micro](https://micro.mu) describes itself as [a microservice toolkit](https://github.com/micro/micro/wiki/Architecture).
-But unlike Go kit, Micro also describes itself as [a microservice ecosystem](https://micro.mu/).
-It takes a broader view, encoding expectations and opinions about the infrastructure and architecture.
-In short, I think Micro wants to _be_ a platform;
- Go kit, in contrast, wants to integrate into your platform.
+与 Go kit一样，[Micro]（https://micro.mu）将自己描述为 [微服务工具包]（https://github.com/micro/micro/wiki/Architecture）。
+但与 Go kit 不同，Micro 也将自己描述为[微服务生态系统]（https://micro.mu/）。
+它有一个更广阔的主张，同时满足基础设施和架构平台的期望和想法。
+简而言之，我认为 Micro 希望成为一个平台;相比之下，Go kit 希望集成到您的平台中。
 
-# Architecture and design
+# 架构与设计
 
-## Introduction &mdash; Understanding Go kit key concepts
+## 简介 - 了解 Go kit 的关键概念
 
-If you're coming from Symfony (PHP), Rails (Ruby), Django (Python), 
- or one of the many popular MVC-style frameworks out there,
- the first thing you should know is that Go kit is not an MVC framework.
-Instead, Go kit services are laid out in three layers:
+如果您来自 Symfony（PHP）、Rails（Ruby）、Django（Python），或者任何一个流行的 MVC 风格的框架，你要知道的第一件事是 Go kit 不是 MVC 框架。
+相反，Go kit 服务分为三层：
 
 1. Transport layer
 2. Endpoint layer
 3. Service layer
 
-Requests enter the service at layer 1, flow down to layer 3, and responses take the reverse course.
+调用请求从第1层进入服务，向内流转到第3层，请求结果以相反方式返回。
 
-This may be a bit of an adjustment, but once you grok the concepts,
- you should see that the Go kit design is well-suited for modern software design:
- both microservices and so-called 
- [elegant](https://martinfowler.com/bliki/MonolithFirst.html)
- [monoliths](https://inconshreveable.com/10-07-2015/the-neomonolith/).
+这对你可能是一个比较大的转变，但一旦你理解了这些概念，你会看到 Go kit 非常适合现代软件设计：包括微服务和称之为 
+[elegant](https://martinfowler.com/bliki/MonolithFirst.html)、
+[monoliths](https://inconshreveable.com/10-07-2015/the-neomonolith/) 的软件设计。
 
-## Transports &mdash; What are Go kit transports?
+## Transports - 什么是 transports?
 
-The transport domain is bound to concrete transports like HTTP or gRPC.
-In a world where microservices may support one or more transports,
- this is very powerful; you can support a legacy HTTP API and a newer RPC service,
-all in a single microservice.
+传输域会与 HTTP 或 gRPC 等具体的传输协议绑定。
+同一个微服务能同时支持一个或多个传输协议，是非常强大的功能； 您可以支持传统的 HTTP API 和更新的 RPC 服务，
+这些都可以在一个微服务实现。
 
-When implementing a REST-ish HTTP API, your routing is defined within a HTTP transport.
-It's most common to see routes defined in a HTTP Router function like this:
+
+实现 REST-ish HTTP API 时，您的路由是在HTTP传输中定义的。
+最常见的在 HTTP 路由器函数中定义的路由如下：
 
 ```go
 r.Methods("POST").Path("/profiles/").Handler(httptransport.NewServer(
@@ -95,31 +82,30 @@ r.Methods("POST").Path("/profiles/").Handler(httptransport.NewServer(
 ))
 ```
 
-## Endpoints &mdash; What are Go kit endpoints?
+## Endpoints - Go kit endpoints 是什么？
 
-An endpoint is like an action/handler on a controller; it's where safety and antifragile logic lives.
-If you implement two transports (HTTP and gRPC), you might have two methods of sending requests to the same endpoint.
+一个 endpoint 端点就像 MVC 中的控制器上的动作或处理程序; 它是开发具有安全和强壮逻辑的程序的生命所在。
+如果你要实现两个传输协议（ HTTP 和 gRPC ），则可能两种方法都可以将请求发送到同一个 endpoint。
 
-## Services &mdash; What is a Go kit service?
+## Services - Go kit service 是什么？
 
-Services are where all of the business logic is implemented.
-A service usually glues together multiple endpoints.
-In Go kit, services are typically modeled as interfaces,
- and implementations of those interfaces contain the business logic.
-Go kit services should strive to abide
- [the Clean Architecture](https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html) or
- [the Hexagonal Architecture](http://alistair.cockburn.us/Hexagonal+architecture).
-That is, the business logic should have no knowledge of endpoint- or especially transport-domain concepts:
- your service shouldn't know anything about HTTP headers, or gRPC error codes.
+Services 是实现所有业务逻辑的地方。
+Services 通常将多个 endpoint 端点集成在一起。
+在 Go kit 中，服务通常被建模为接口，
+这些接口的具体实现包含实际业务逻辑。
+Go kit service 应努力遵守
+也就是说，业务逻辑不用了解 endpoint 或特别是 transports 的概念：
+你的服务不应该知道有关 HTTP 头部或 gRPC 错误代码的任何信息。
 
-## Middlewares &mdash; What are middlewares, in Go kit?
 
-Go kit tries to enforce a strict separation of concerns through use of the middleware (or decorator) pattern.
-Middlewares can wrap endpoints or services to add functionality, such as
- logging, rate limiting, load balancing, or distributed tracing.
-It's common to chain multiple middlewares around an endpoint or service.
+## Middlewares - 在 Go kit 中 middlewares 是什么?
 
-## Design &mdash; How is a Go kit microservice modeled?
+Go kit 试图通过使用中间件（或装饰器）模式来强制严格分离关注点。
+中间件可以封装 endpoint 或 service 来添加更多功能，例如日志记录，速率限制，负载均衡或分布式追踪。
+在 endpoint 或 service 外层链接多个中间件是很常见的。
+
+
+## Design - Go kit 微服务是如何建模的？
 
 <img src="onion.png" height=355 width=355 alt="Go kit service diagram" style="float:right;" />
 
