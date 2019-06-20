@@ -223,7 +223,7 @@ type countRequest
 type countResponse
 ```
 
-## Transport logging 传输层记录
+## Transport logging 传输层日志记录
 
 任何需要记录的组件都应该像把数据连接当作依赖项那样，同样也应将 logger 视为依赖项。
 因此，我们在我们的  `func main` 中构建我们的 logger，并将其传递给需要它的组件。
