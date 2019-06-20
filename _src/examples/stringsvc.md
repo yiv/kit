@@ -239,10 +239,11 @@ type countResponse
 type Middleware func(Endpoint) Endpoint
 ```
 
-> Note, that the Middleware type is provided for you by go-kit.
+> 请注意，中间件类型是由 go-kit 为您提供的。
 
-In between, it can do anything.
-Below you can see how a basic logging middleware could be implemented (you don't need to copy/paste this code anywhere):
+在这之间可以做任何事情。
+
+您可以在下面看到如何实现基本的日志记录中间件：
 
 ```go
 func loggingMiddleware(logger log.Logger) Middleware {
@@ -256,8 +257,9 @@ func loggingMiddleware(logger log.Logger) Middleware {
 }
 ```
 
-Use the [go-kit log](https://gokit.io/faq/#logging-mdash-why-is-package-log-so-different) package and remove the standard libraries [log](https://golang.org/pkg/log/).
-You will need to remove `log.Fatal` from the bottom of the `main.go` file.
+使用 [go-kit log](https://gokit.io/faq/#logging-mdash-why-is-package-log-so-different) 日志软件包，移出标准库的 [log](https://golang.org/pkg/log/)。
+
+您需要从`main.go`文件的底部删除`log.Fatal`。
 
 ```go
 import (
@@ -265,8 +267,9 @@ import (
 )
 ```
 
-And wire it into each of our handlers.
-Note that the next code section will *not* compile until you follow the **Application Logging** section, which defines loggingMiddleware.
+并将其连接到我们的每个处理程序中。
+
+请注意，在您遵循定义 loggingMiddleware 的 ** Application Logging ** 部分之前，下面的代码段将 *不会* 编译。
 
 ```go
 logger := log.NewLogfmtLogger(os.Stderr)
@@ -294,15 +297,17 @@ countHandler := httptransport.NewServer(
 )
 ```
 
-It turns out that this technique is useful for a lot more than just logging.
-Many Go kit components are implemented as endpoint middlewares.
+事实证明，这种技术不仅仅只用于日志记录，还有很多用处。
 
-## Application logging
+许多 Go kit 组件被实现为 endpoint 端点中间件。
 
-But what if we want to log in our application domain, like the parameters that are passed in?
-It turns out that we can define a middleware for our service, and get the same nice and composable effects.
-Since our StringService is defined as an interface, we just need to make a new type
- which wraps an existing StringService, and performs the extra logging duties.
+## Application logging 应用日志
+
+但是，如果我们想要为我们的应用程序域进行日志记录呢，比如传入的参数？
+
+事实证明，我们可以为我们的服务定义一个中间件，可以获得同样好的组合效果。
+
+由于我们的 StringService 被定义为接口，我们只需要创建一个新的类型，它包装现有的 StringService，并执行额外的日志记录任务。
 
 ```go
 type loggingMiddleware struct {
@@ -340,7 +345,7 @@ func (mw loggingMiddleware) Count(s string) (n int) {
 }
 ```
 
-And wire it in.
+然后把它连接起来。
 
 ```go
 import (
@@ -372,19 +377,23 @@ func main() {
 	)
 }
 ```
+使用端点中间件来解决 transport 传输层问题，例如熔断和速率限制。
 
-Use endpoint middlewares for transport-domain concerns, like circuit breaking and rate limiting.
-Use service middlewares for business-domain concerns, like logging and instrumentation.
-Speaking of instrumentation...
+使用服务中间件来解决业务领域问题，例如日志记录和度量。
 
-## Application instrumentation
+说到度量...
 
-In Go kit, instrumentation means using **package metrics** to record statistics about your service's runtime behavior.
-Counting the number of jobs processed,
- recording the duration of requests after they've finished,
- and tracking the number of in-flight operations would all be considered instrumentation.
+## Application instrumentation 应用度量
 
-We can use the same middleware pattern that we used for logging.
+在 Go kit 包中，度量意味着使用 **package metrics** 来记录有关服务运行时行为的统计信息。
+
+计算处理的任务数量。
+
+记录请求完成的持续时间，
+
+跟踪  in-flight operations 的数量都将被视为度量。
+
+我们可以使用跟日志记录中间件相同的模式。
 
 ```go
 type instrumentingMiddleware struct {
@@ -418,7 +427,7 @@ func (mw instrumentingMiddleware) Count(s string) (n int) {
 }
 ```
 
-And wire it into our service.
+然后把它连接起来。
 
 ```go
 import (
@@ -477,7 +486,7 @@ func main() {
 
 ## stringsvc2
 
-The complete service so far is [stringsvc2](https://github.com/go-kit/kit/blob/master/examples/stringsvc2).
+到目前为止，完整的服务是 [stringsvc2](https://github.com/go-kit/kit/blob/master/examples/stringsvc2).
 
 ```
 $ go get github.com/go-kit/kit/examples/stringsvc2
@@ -497,17 +506,15 @@ method=uppercase input="hello, world" output="HELLO, WORLD" err=null took=2.455�
 method=count input="hello, world" n=12 took=743ns
 ```
 
-# Calling other services
+# 调用其他服务
 
-It's rare that a service exists in a vacuum.
-Often, you need to call other services.
-**This is where Go kit shines**.
-We provide transport middlewares to solve many of the problems that come up.
-
-Let's say that we want to have our string service call out to a _different_ string service
- to satisfy the Uppercase method.
-In effect, proxying the request to another service.
-Let's implement the proxying middleware as a ServiceMiddleware, same as a logging or instrumenting middleware.
+很少有服务会孤立地存在。
+通常，你需要调用其他服务。
+**这是 Go kit 大展拳脚的地方**。
+我们提供传输中间件来解决接下来出现的许多问题。
+假设我们希望我们的 string 服务去调用一个 _不同的_ string 服务以满足 Uppercase 方法。
+实际就是，将请求代理到另一个服务。
+让我们来将代理中间件实现为一个 ServiceMiddleware，与日志记录或度量中间件相同。
 
 ```go
 // proxymw implements StringService, forwarding Uppercase requests to the
@@ -519,11 +526,11 @@ type proxymw struct {
 }
 ```
 
-## Client-side endpoints
+## Client-side endpoints 
 
-We've got exactly the same endpoint we already know about, but we'll use it to invoke, rather than serve, a request.
-When used this way, we call it a _client_ endpoint.
-And to invoke the client endpoint, we just do some simple conversions.
+我们在这需要我们已经了解过的完全相同的端点，但是我们将使用它来调用请求，而不是响应请求。
+以这种方式使用时，我们将其称为 _client_ endpoint。
+为了能调用 client endpoint，我们只需进行一些简单的转换。
 
 ```go
 func (mw proxymw) Uppercase(s string) (string, error) {
@@ -539,6 +546,8 @@ func (mw proxymw) Uppercase(s string) (string, error) {
 }
 ```
 
+现在，为了构建这些代理中间件之一，我们将代理URL字符串转换为端点。
+如果我们通过 HTTP 传输 JSON，我们可以在 transport/http 包中使用一个帮助函数。
 Now, to construct one of these proxying middlewares, we convert a proxy URL string to an endpoint.
 If we assume JSON over HTTP, we can use a helper in the transport/http package.
 
@@ -563,8 +572,13 @@ func makeUppercaseProxy(proxyURL string) endpoint.Endpoint {
 }
 ```
 
-## Service discovery and load balancing
+## 服务发现和负载平衡
 
+如果我们只有一个远程服务问题就比较简单。
+但在现实中，我们可能会有许多可用的服务实例。
+我们希望通过一些服务发现机制来发现它们，并将负载分散到它们所有当中。
+如果这些实例中的任何一个开始表现不好，我们希望在不影响我们自己的服务可靠性的情况下处理这个问题。
+Go kit 为不同的服务发现系统提供适配器，以获取最新的实例集，并作为单独的端点公开。这些适配器称为 Subscriber。
 That's fine if we only have a single remote service.
 But in reality, we'll probably have many service instances available to us.
 We want to discover them through some service discovery mechanism, and spread our load across all of them.
@@ -579,14 +593,14 @@ type Subscriber interface {
 }
 ```
 
-Internally, subscribers use a provided factory function to convert each discovered instance string (typically host:port) to a usable endpoint.
+在内部，subscribers 使用提供的工厂函数将每个发现的实例字符串（通常是 host：port ）转换为可用的端点。
 
 ```go
 type Factory func(instance string) (endpoint.Endpoint, error)
 ```
 
-So far, our factory function, makeUppercaseProxy, just calls the URL directly.
-But it's important to put some safety middleware, like circuit breakers and rate limiters, into your factory, too.
+到目前为止，我们的工厂函数 makeUppercaseProxy 仅仅是直接调用URL。
+但是，将一些安全中间件（如熔断器和限流器）放入工厂函数中也非常重要。
 
 ```go
 var e endpoint.Endpoint
@@ -595,9 +609,9 @@ e = circuitbreaker.Gobreaker(gobreaker.NewCircuitBreaker(gobreaker.Settings{}))(
 e = kitratelimit.NewTokenBucketLimiter(jujuratelimit.NewBucketWithRate(float64(maxQPS), int64(maxQPS)))(e)
 ```
 
-Now that we've got a set of endpoints, we need to choose one.
-Load balancers wrap subscribers, and select one endpoint from many.
-Go kit provides a couple of basic load balancers, and it's easy to write your own if you want more advanced heuristics.
+现在我们已经有了一组 endpoints 端点，我们需要选择一个。
+负载均衡器会封装 subscribers，并从许多 endpoint 中选择一个。
+Go kit 提供了几个基本的负载均衡器，如果你想要更高级的启发式算法，你可以很容易地编写自己的负载均衡器。
 
 ```go
 type Balancer interface {
@@ -605,31 +619,31 @@ type Balancer interface {
 }
 ```
 
-Now we have the ability to choose endpoints according to some heuristic.
-We can use that to provide a single, logical, robust endpoint to consumers.
-A retry strategy wraps a load balancer, and returns a usable endpoint.
-The retry strategy will retry failed requests until either the max attempts or timeout has been reached.
+现在我们可以根据一些启发式算法选择 endpoint 端点。
+我们可以使用它为消费者提供单一的、合理的、健壮的 endpoint 端点。
+使用一个重试策略封装负载均衡器，以保证返回一个可用的 endpoint 端点。
+重试策略将重试失败的请求，直到达到最大尝试次数或超时。
 
 ```go
 func Retry(max int, timeout time.Duration, lb Balancer) endpoint.Endpoint
 ```
 
-Let's wire up our final proxying middleware.
-For simplicity, we'll assume the user will specify multiple comma-separate instance endpoints with a flag.
+让我们把最终的代理中间件连接起来。
+为简单起见，我们假设用户会指定多个逗号分隔符和标志来区分 endpoint 实例。
 
 ```go
 func proxyingMiddleware(instances string, logger log.Logger) ServiceMiddleware {
-	// If instances is empty, don't proxy.
+	// 如果实例为空，不代理
 	if instances == "" {
 		logger.Log("proxy_to", "none")
 		return func(next StringService) StringService { return next }
 	}
 
-	// Set some parameters for our client.
+	// 为我们的客户端设置一些参数。
 	var (
-		qps         = 100                    // beyond which we will return an error
-		maxAttempts = 3                      // per request, before giving up
-		maxTime     = 250 * time.Millisecond // wallclock time, before giving up
+		qps         = 100                    // 超出该值我们将返回错误
+		maxAttempts = 3                      // 在放弃前，每请求的尝试次数
+		maxTime     = 250 * time.Millisecond // 在放弃前，最在等待时间
 	)
 
 	// Otherwise, construct an endpoint for each instance in the list, and add
@@ -663,7 +677,7 @@ func proxyingMiddleware(instances string, logger log.Logger) ServiceMiddleware {
 
 ## stringsvc3
 
-The complete service so far is [stringsvc3](https://github.com/go-kit/kit/blob/master/examples/stringsvc3).
+到目前为止，完整的服务是 [stringsvc3](https://github.com/go-kit/kit/blob/master/examples/stringsvc3).
 
 ```
 $ go get github.com/go-kit/kit/examples/stringsvc3
@@ -697,17 +711,16 @@ listen=:8003 caller=logging.go:28 method=uppercase input=baz output=BAZ err=null
 listen=:8080 caller=logging.go:28 method=uppercase input=baz output=BAZ err=null took=1.388155ms
 ```
 
-# Advanced topics
+# 高级主题 
 
 ## Threading a context
 
-The context object is used to carry information across conceptual boundaries in the scope of a single request.
-In our example, we haven't yet threaded the context through our business logic.
-But that's almost always a good idea.
-It allows you to pass request-scoped information between business logic and middlewares,
- and is necessary for more sophisticated tasks like granular distributed tracing annotations.
+上下文对象用于在单个请求的范围内跨概念边界传送信息。
+在我们的示例中，我们尚未在我们的业务逻辑当中处理上下文。
+但这几乎总是一个好想法。
+它允许您在业务逻辑和中间件之间传递请求范围的信息，并且对于更复杂的任务（如分布式精细跟踪标记）是必需的。
 
-Concretely, this means your business logic interfaces will look like
+具体来说，这意味着您的业务逻辑接口将如下所示：
 
 ```go
 type MyService interface {
@@ -717,19 +730,18 @@ type MyService interface {
 }
 ```
 
-## Distributed tracing
+## 分布式追踪
 
-Once your infrastructure grows beyond a certain size,
- it becomes important to trace requests through multiple services,
- so you can identify and troubleshoot hotspots.
-See [package tracing](https://github.com/go-kit/kit/blob/master/tracing) for more information.
+一旦您的基础设施增长超过一定规模，
+对跨越多个服务的请求进行追踪就会变得很重要，
+这样您就可以识别并排查故障热点。
 
-## Creating a client package
+参考 [package tracing](https://github.com/go-kit/kit/blob/master/tracing) 获取更多信息。
 
-It's possible to use Go kit to create a client package to your service,
- to make consuming your service easier from other Go programs.
-Effectively, your client package will provide an implementation of your service interface,
- which invokes a remote service instance using a specific transport.
-See [addsvc/cmd/addcli](https://github.com/go-kit/kit/blob/master/examples/addsvc/cmd/addcli)
- or [package profilesvc/client](https://github.com/go-kit/kit/blob/master/examples/profilesvc/client)
- for examples.
+## 创建 client 包
+
+可以使用 Go kit 为您的服务创建客户端代码包，以便能从其他 Go 程序中轻松使用您的服务。
+实际上，您的客户端代码包将提供服务接口的实现，它使用特定的传输层调用远程服务实例。
+参考 [addsvc/cmd/addcli](https://github.com/go-kit/kit/blob/master/examples/addsvc/cmd/addcli)
+ 或 [package profilesvc/client](https://github.com/go-kit/kit/blob/master/examples/profilesvc/client)
+ 作为示例.

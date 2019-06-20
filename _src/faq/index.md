@@ -4,13 +4,17 @@
     "toc": true
 }
 ---
-# General
+# 概要
 
+<<<<<<< HEAD
 ## Go kit 是什么？
 Go kit 是一套可以帮助你构建强健的、可靠的和易于维护的微服务的 Go 软件包（库）的集合。
 它最初的构想是作为一个工具箱，可以帮助大型组织（当代企业）采用 Go 作为开发语言。
 但是它的目标群体却迅速向下扩散，现在同样适用于小型创业公司和机构。
 了解更多 Go kit 源起，请阅读 [Go kit: Go in the modern enterprise](http://peter.bourgon.org/go-kit/)。
+=======
+## Go kit 是什么?
+>>>>>>> e52804fa148d2812b09fd606c87a880ee27bb9bf
 
 ## 我为什么应该使用 Go kit?
 
