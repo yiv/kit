@@ -6,15 +6,17 @@
 ---
 # General
 
-## What is Go kit?
+## Go kit 是什么？
+Go kit 是一套可以帮助你构建强健的、可靠的和易于维护的微服务的 Go 软件包（库）的集合。
+它最初的构想是作为一个工具箱，可以帮助大型组织（当代企业）采用 Go 作为开发语言。
+但是它的目标群体却迅速向下扩散，现在同样适用于小型创业公司和机构。
+了解更多 Go kit 源起，请阅读 [Go kit: Go in the modern enterprise](http://peter.bourgon.org/go-kit/)。
 
-Go kit is a collection of Go (golang) packages (libraries) that help you build robust, reliable, maintainable microservices.
-It was originally conceived as a toolkit to help larger (so-called _modern enterprise_) organizations adopt Go as an implementation language.
-But it very quickly "grew downward", and now serves smaller startups and organizations just as well.
-For more about the origins of Go kit, see [Go kit: Go in the modern enterprise](http://peter.bourgon.org/go-kit/).
+## 我为什么应该使用 Go kit?
 
-## Why should I use Go kit?
-
+如果你想把微服务设计模式引入公司，你应该使用 Go kit。
+Go kit 可以帮助你组织和构建你的服务，规避常陷阱，保证代码优雅地增长。
+Go kit 可以向工程经理或技术领导证明
 You should use Go kit if you know you want to adopt the microservices pattern in your organization.
 Go kit will help you structure and build out your services,
  avoid common pitfalls, and write code that grows with grace.
